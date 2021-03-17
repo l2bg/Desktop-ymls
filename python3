@@ -1,4 +1,5 @@
-#YAML
+#INSTALA E VERIFICA A VERSÃO DO PYTHON APÓS INSTALAR NO NODE REMOTO
+
 - hosts: localhost
  become: yes
  remote_user: root
