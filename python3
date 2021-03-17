@@ -1,0 +1,17 @@
+#YAML
+- hosts: localhost
+ become: yes
+ remote_user: root
+
+ tasks:
+   - name: instalar python3
+   package: python3
+   state: latest
+
+   -name: verificar versão
+   shell: python --version
+   register: python_version
+
+   - debug:
+     msg:
+       - "{{ python_version}}"
