@@ -1,0 +1,47 @@
+
+- hosts: localhost
+  vars:
+    servidor_ntp: "servers pool.ntp.org"
+  become: true
+  remote_user: root
+  tasks:
+      - name: instala pacote ntp
+        package: 
+             name: ntp 
+             state: latest
+  
+      - name: ativa serviço ntp
+        service:
+             name: ntpd.service
+             state: started
+      
+      - name: desativa serviço ntp para configuração
+        service:
+             name: ntpd.service
+             state: stopped
+        register: ntpd_down
+
+#Debug apenas para confirmar se serviço foi interrompido
+
+      - debug:
+           msg: "NTP desativado: {{ ntpd_down.changed }}"           
+
+      - name: configura o arquivo ntp.conf
+        template:
+           src=templates/ntp.j2
+           dest=/etc/ntp/ntp.conf
+           owner=root
+           mode=0644
+           backup=yes
+        when: ntpd_down.changed == true
+        
+
+      - name: reinicia ntp
+        service:
+             name: ntpd.service
+             state: restarted
+             enabled: yes   
+        register: ntp_deploy 
+ 
+      -  debug:
+            msg: "Deploy do NTP concluído: {{ ntp_deploy.changed }}"
