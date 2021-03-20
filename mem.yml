@@ -1,0 +1,26 @@
+#Playbook que verificaa a memoria RAM dos hosts
+
+- hosts: localhost
+  strategy: free
+  vars:
+    ramused_mb: "{{ ansible_memory_mb.real.used }}"
+    maxcacheram_mb: 200
+
+  become: true
+  remote_user: root
+
+  tasks:
+    - name: verificando RAM
+      debug:
+        msg: "RAM em cache(MB): {{ ramused_mb }}"
+
+    - name: liberando RAM em cache
+      shell: sync; echo 1 > /proc/sys/vm/drop_caches
+      when: ramused_mb > "maxcacheram_mb"
+      notify:
+        name: check
+
+  handlers:
+    - name: check
+      debug:
+        msg: "RAM em cache(MB): {{ ramused_mb }}"
