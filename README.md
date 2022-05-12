@@ -1,1 +1,1 @@
-Testando automatizção de algumas demandas do dia a dia com o Ansible
+Test Automation of some day-to-day demands with Ansible
